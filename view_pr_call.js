@@ -16,8 +16,7 @@ window.call_view_pr = function(userPref) {
 	 // Output JSON
 	 var response = '';
 
-	 $(function() {
-        var params = {
+	 var params = {
             // Request parameters
             "name": "",
             "address": "",
@@ -34,19 +33,10 @@ window.call_view_pr = function(userPref) {
             "characteristic": "",
             "lastUpdated": "",
             "Id": "",
-        };
-      
-        $.ajax({
-            url: "https://viewpr.azure-api.net/api/venue?" + $.param(params),
-            beforeSend: function(xhrObj){
-                // Request headers
-                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","50e21f374f8a4c099e9decb02f1a1703");
-            },
-            type: "GET",
-            // Request body
-            data: "",
-        })
-        .done(function(data) {
+     };
+
+	 function httpGetAsync() {
+	 	callback = function(data) {
             console.log("success");
             response = data;
 
@@ -57,18 +47,22 @@ window.call_view_pr = function(userPref) {
             	var tA;
             	for(var el in response) {
             		curObj = response[el];
-            		
+            		address = curObj.address;
+            		tA = curObj.tA;
             	}
             }
-        })
-        .fail(function() {
-            console.log("error");
-        });
-    });
+        };
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.setRequestHeader("Ocp-Apim-Subscription-Key","50e21f374f8a4c099e9decb02f1a1703");
+	    xmlHttp.onreadystatechange = function() { 
+	        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+	            callback(xmlHttp.responseText);
+	    }
+	    xmlHttp.open("GET", "https://viewpr.azure-api.net/api/venue?" + $.param(params), true); // true for asynchronous 
+	    xmlHttp.send(null);
+	}
 
-	
-
-}
+	httpGetAsync();
 
 
 
